@@ -78,7 +78,6 @@
         },
         methods: {
             listMeetings() {
-                this.currentPage = 1;
                 axios({
                     url: `${serverUrl}/list-meetings`,
                     method: 'get',
