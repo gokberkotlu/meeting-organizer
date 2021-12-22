@@ -4,7 +4,7 @@
 
 ## Content of Project
 
-- It is an fullstack Vue.js and NodeJs application that records the meeting dates and times.
+- It is a Fullstack Vue.js and NodeJs Application that records the meeting dates and times.
 
 - Data such as participants, meeting date information can be edited and deleted.
 
