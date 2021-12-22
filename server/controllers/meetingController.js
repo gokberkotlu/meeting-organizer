@@ -2,7 +2,7 @@ const Meeting = require('../models/meeting');
 
 const listMeetings_get = async (req, res) => {
     // destructure page and limit and set default values
-    const { page = 1, limit = 10 } = req.body;
+    const { page = 1, limit = 10 } = req.query;
 
     try {
         // execute query with page and limit values
