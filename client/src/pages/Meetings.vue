@@ -1,6 +1,5 @@
 <template>
     <div>
-        <!-- <b-table striped hover :items="meetings" :fields="fields"></b-table> -->
         <b-table striped hover :items="meetings" :fields="fields">
             <template #cell(actions)="row">
                 <b-button @click="editMeeting(row.item)" size="sm"
@@ -88,13 +87,17 @@
                     // pull the totalpage number and meetings in current page
                     this.totalPageNumber = resData.totalPages;
 
-                    this.meetings = [ ...resData.meetings ].map(meeting => {
+                    if(this.currentPage > this.totalPageNumber) {
+                        this.currentPage = this.totalPageNumber;
+                    }
 
+                    this.$bvModal.hide('modal-add-meeting');
+                    this.$bvModal.hide('modal-edit-meeting');
+
+                    this.meetings = [ ...resData.meetings ].map(meeting => {
                         meeting.participants = meeting.participants.join(', ');
                         return meeting;
                     });
-
-                    console.log(resData);
                 });
             },
             editMeeting() {},

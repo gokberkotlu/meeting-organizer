@@ -28,16 +28,18 @@ const listMeetings_get = async (req, res) => {
 }
 
 const addMeeting_post = async (req, res) => {
-    const meeting = new Meeting(req.body);
-
-    console.log(req.body);
     
     try {
+        const meeting = new Meeting(req.body);
         meeting.save()
         .then(meeting => {
             res.status(200).json({
                 info: "New meeting is created",
                 meeting
+            });
+        }).catch(err => {
+            res.status(400).json({
+                error: err
             });
         });
     } catch(err) {
@@ -50,32 +52,39 @@ const addMeeting_post = async (req, res) => {
 const updateMeeting_put = async (req, res) => {
     const { id, subject, date, start_time, end_time, participants } = req.body;
 
-    var meeting = await Meeting.findById(id);
-
-    if(subject) {
-        meeting.subject = subject;
-    }
-    
-    if(date) {
-        meeting.date = date;
-    }
-
-    if(start_time) {
-        meeting.start_time = start_time;
-    }
-
-    if(end_time) {
-        meeting.end_time = end_time;
-    }
-
-    if(participants) {
-        meeting.participants = participants;
-    }
-
     try {
-        await meeting.save();
-        res.status(200).json({
-            info: "Meeting is editted"
+        var meeting = await Meeting.findById(id);
+
+        if(subject) {
+            meeting.subject = subject;
+        }
+        
+        if(date) {
+            meeting.date = date;
+        }
+    
+        if(start_time) {
+            meeting.start_time = start_time;
+        }
+    
+        if(end_time) {
+            meeting.end_time = end_time;
+        }
+    
+        if(participants) {
+            meeting.participants = participants;
+        }
+
+        meeting.save()
+        .then(meeting => {
+            res.status(200).json({
+                info: "Meeting is editted",
+                meeting
+            });
+        }).catch(err => {
+            res.status(400).json({
+                error: err
+            });
         });
     } catch(err) {
         res.status(400).json({

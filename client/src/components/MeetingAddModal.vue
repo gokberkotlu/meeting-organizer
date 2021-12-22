@@ -69,22 +69,33 @@ export default {
     },
     methods: {
         addMeetingInformation() {
-            axios({
-                method: 'post',
-                url: `${serverUrl}/add-meeting`,
-                data: this.newMeetingData
-            })
-            .then(res => {
-                if(res.status === 200) {
-                    this.$emit('updated');
-                    this.newMeetingData = {}
-                }
-            });
+            if(
+                this.newMeetingData.subject !== '' &&
+                this.newMeetingData.date !== '' &&
+                this.newMeetingData.start_time !== '' &&
+                this.newMeetingData.end_time !== ''
+            ) {
+                axios({
+                    method: 'post',
+                    url: `${serverUrl}/add-meeting`,
+                    data: {...this.newMeetingData, participants: this.participants}
+                })
+                .then(res => {
+                    if(res.status === 200) {
+                        this.$emit('updated');
+                        this.newMeetingData = {};
+                        this.participants = [];
+                        this.$refs["participant-input"].$refs.input.value = '';
+                    }
+                });
+            }
         },
         addParticipant() {
             let newParticipant = this.$refs["participant-input"].$refs.input.value;
-            this.participants = [...this.participants, newParticipant ]
-            console.log(this.participants);
+            if(newParticipant !== '') {
+                this.participants = [...this.participants, newParticipant ];
+                this.$refs["participant-input"].$refs.input.value = '';
+            }
         },
         deleteParticipant(index) {
             this.participants.splice(index, 1);
