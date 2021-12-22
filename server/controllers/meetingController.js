@@ -50,10 +50,7 @@ const addMeeting_post = async (req, res) => {
 }
 
 const updateMeeting_put = async (req, res) => {
-    // const { id, subject, date, start_time, end_time, participants } = req.body;
-
-    console.log(req.body);
-
+    
     try {
         const body = req.body;
 
