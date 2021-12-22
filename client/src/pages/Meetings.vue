@@ -90,6 +90,11 @@
                     // pull the totalpage number and meetings in current page
                     this.totalPageNumber = resData.totalPages;
 
+                    if(this.currentPage > resData.totalPages) {
+                        this.currentPage -= 1;
+                        this.listMeetings();
+                    }
+
                     this.$bvModal.hide('modal-add-meeting');
                     this.$bvModal.hide('modal-edit-meeting');
 
