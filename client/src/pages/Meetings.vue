@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="meetings-home-container">
         <b-table striped hover :items="meetings" :fields="fields">
             <template #cell(actions)="row">
                 <b-button @click="editMeeting(row.item)" size="sm"
@@ -25,6 +25,7 @@
         </div>
 
         <meeting-add-modal @updated="listMeetings" />
+        <meeting-edit-modal v-if="meetingInfoEdit" :meetingInfoEdit="meetingInfoEdit" @updated="listMeetings" />
     </div>
 </template>
 
@@ -34,6 +35,7 @@
         serverUrl
     } from '../utils/serverUrl'
     import MeetingAddModal from '../components/MeetingAddModal.vue'
+    import MeetingEditModal from '../components/MeetingEditModal.vue'
     import Pagination from '../components/Pagination.vue'
 
     export default {
@@ -43,6 +45,7 @@
         data() {
             return {
                 meetings: null,
+                meetingInfoEdit: {},
                 currentPage: 1,
                 totalPageNumber: null,
                 limit: 5,
@@ -75,6 +78,7 @@
         },
         methods: {
             listMeetings() {
+                this.currentPage = 1;
                 axios({
                     url: `${serverUrl}/list-meetings`,
                     method: 'get',
@@ -87,10 +91,6 @@
                     // pull the totalpage number and meetings in current page
                     this.totalPageNumber = resData.totalPages;
 
-                    if(this.currentPage > this.totalPageNumber) {
-                        this.currentPage = this.totalPageNumber;
-                    }
-
                     this.$bvModal.hide('modal-add-meeting');
                     this.$bvModal.hide('modal-edit-meeting');
 
@@ -100,9 +100,24 @@
                     });
                 });
             },
-            editMeeting() {},
+            editMeeting(row) {
+                this.meetingInfoEdit = {
+                    ...row
+                };
+
+                if(this.meetingInfoEdit.participants && this.meetingInfoEdit.participants.includes(', ')) {
+                    this.meetingInfoEdit.participants = this.meetingInfoEdit.participants.split(', ');
+                } else {
+                    this.meetingInfoEdit.participants = [this.meetingInfoEdit.participants];
+                }
+
+                // this.meetingInfoEdit.date = new Date(this.meetingInfoEdit.date);
+                if (this.meetingInfoEdit) {
+                    this.$bvModal.show('modal-edit-meeting');
+                }
+                console.log(this.meetingInfoEdit);
+            },
             deleteMeeting(id) {
-                console.log(id)
                 axios({
                     method: 'delete',
                     url: `${serverUrl}/delete-meeting`,
@@ -130,7 +145,16 @@
         },
         components: {
             MeetingAddModal,
-            Pagination
+            Pagination,
+            MeetingEditModal
         }
     }
 </script>
+
+<style scoped>
+    .meetings-home-container {
+        width: 80%;
+        min-width: 420px;
+        margin: 5rem auto 0 auto;
+    }
+</style>

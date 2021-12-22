@@ -1,16 +1,18 @@
 <template>
   <div id="app">
-    <h2>APP.VUE</h2>
+    <Navbar />
     <Meetings />
   </div>
 </template>
 
 <script>
 import Meetings from './pages/Meetings.vue'
+import Navbar from './components/common/Navbar.vue'
 
 export default {
   name: 'App',
   components: {
+    Navbar,
     Meetings
   }
 }

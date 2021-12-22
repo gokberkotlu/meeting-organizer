@@ -50,9 +50,20 @@ const addMeeting_post = async (req, res) => {
 }
 
 const updateMeeting_put = async (req, res) => {
-    const { id, subject, date, start_time, end_time, participants } = req.body;
+    // const { id, subject, date, start_time, end_time, participants } = req.body;
+
+    console.log(req.body);
 
     try {
+        const body = req.body;
+
+        const id = body._id;
+        const subject = body.subject;
+        const date= body.date;
+        const start_time = body.start_time;
+        const end_time = body.end_time;
+        const participants = body.participants;
+
         var meeting = await Meeting.findById(id);
 
         if(subject) {
@@ -87,6 +98,7 @@ const updateMeeting_put = async (req, res) => {
             });
         });
     } catch(err) {
+        console.log(err);
         res.status(400).json({
             error: err
         });

@@ -3,39 +3,39 @@
         <p class="my-4">Insert New Meeting Information</p>
 
         <b-form @submit.prevent="addMeetingInformation()">
-            <b-form-group id="input-group-meeting-subject-edit" label="Subject:" label-for="input-edit-meeting-subject-edit">
-                <b-form-input id="input-edit-meeting-subject-edit" type="text" placeholder="Enter subject"
+            <b-form-group id="input-group-meeting-subject-add" label="Subject:" label-for="input-add-meeting-subject-add">
+                <b-form-input id="input-add-meeting-subject-add" type="text" placeholder="Enter subject"
                 v-model="newMeetingData.subject"
                 required>
                 </b-form-input>
             </b-form-group>
 
-            <b-form-group id="input-group-meeting-date-edit" label="Date:"
-                label-for="input-edit-meeting-date-edit">
-                <b-form-datepicker id="input-edit-meeting-date-edit" type="date" placeholder="Enter date"
+            <b-form-group id="input-group-meeting-date-add" label="Date:"
+                label-for="input-add-meeting-date-add">
+                <b-form-datepicker id="input-add-meeting-date-add" type="date" placeholder="Enter date"
                 v-model="newMeetingData.date" :min="minDate" required>
                 </b-form-datepicker>
             </b-form-group>
 
-            <b-form-group id="input-group-meeting-start-time-edit" label="Start time:"
-                label-for="input-edit-meeting-start-time-edit">
-                <b-form-timepicker id="input-edit-meeting-start-time-edit" type="date" placeholder="Enter start time"
+            <b-form-group id="input-group-meeting-start-time-add" label="Start time:"
+                label-for="input-add-meeting-start-time-add">
+                <b-form-timepicker id="input-add-meeting-start-time-add" type="date" placeholder="Enter start time"
                 v-model="newMeetingData.start_time" required>
                 </b-form-timepicker>
             </b-form-group>
 
-            <b-form-group id="input-group-meeting-end-time-edit" label="End time:"
-                label-for="input-edit-meeting-end-time-edit">
-                <b-form-timepicker id="input-edit-meeting-end-time-edit" type="date" placeholder="Enter end time"
+            <b-form-group id="input-group-meeting-end-time-add" label="End time:"
+                label-for="input-add-meeting-end-time-add">
+                <b-form-timepicker id="input-add-meeting-end-time-add" type="date" placeholder="Enter end time"
                 v-model="newMeetingData.end_time" required>
                 </b-form-timepicker>
             </b-form-group>
 
-            <b-form-group id="input-group-meeting-participants-edit" label="participants:" label-for="input-edit-meeting-participants-edit">
+            <b-form-group id="input-group-meeting-participants-add" label="Participants:" label-for="input-add-meeting-participants-add">
                 <div class="participant-input-container">
                     <b-form-input
-                    ref="participant-input"
-                    id="input-edit-meeting-participants-edit"
+                    ref="participant-input-add"
+                    id="input-add-meeting-participants-add"
                     type="text"
                     placeholder="Enter a participant">
                     </b-form-input>
@@ -75,26 +75,40 @@ export default {
                 this.newMeetingData.start_time !== '' &&
                 this.newMeetingData.end_time !== ''
             ) {
-                axios({
-                    method: 'post',
-                    url: `${serverUrl}/add-meeting`,
-                    data: {...this.newMeetingData, participants: this.participants}
-                })
-                .then(res => {
-                    if(res.status === 200) {
-                        this.$emit('updated');
-                        this.newMeetingData = {};
-                        this.participants = [];
-                        this.$refs["participant-input"].$refs.input.value = '';
-                    }
-                });
+                var regex = new RegExp(':', 'g'),
+                    timeStr1 = this.newMeetingData.start_time,
+                    timeStr2 = this.newMeetingData.end_time;
+                if(parseInt(timeStr1.replace(regex, ''), 10) < parseInt(timeStr2.replace(regex, ''), 10)) {
+                    axios({
+                        method: 'post',
+                        url: `${serverUrl}/add-meeting`,
+                        data: {...this.newMeetingData, participants: this.participants}
+                    })
+                    .then(res => {
+                        if(res.status === 200) {
+                            this.$emit('updated');
+                            this.newMeetingData = {};
+                            this.participants = [];
+                            this.$refs["participant-input-add"].$refs.input.value = '';
+                            this.$bvToast.toast("New meeting is added", {
+                                title: 'Success',
+                                autoHideDelay: 3000
+                            })
+                        }
+                    });
+                } else {
+                    this.$bvToast.toast("Meeting end time can not be before start time", {
+                        title: 'Fail',
+                        autoHideDelay: 3000
+                    })
+                }
             }
         },
         addParticipant() {
-            let newParticipant = this.$refs["participant-input"].$refs.input.value;
+            let newParticipant = this.$refs["participant-input-add"].$refs.input.value;
             if(newParticipant !== '') {
                 this.participants = [...this.participants, newParticipant ];
-                this.$refs["participant-input"].$refs.input.value = '';
+                this.$refs["participant-input-add"].$refs.input.value = '';
             }
         },
         deleteParticipant(index) {
