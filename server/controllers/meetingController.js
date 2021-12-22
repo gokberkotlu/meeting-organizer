@@ -21,7 +21,9 @@ const listMeetings_get = async (req, res) => {
         currentPage: page
         });
     } catch (err) {
-        console.error(err.message);
+        res.status(400).json({
+            error: err
+        });
     }
 }
 
