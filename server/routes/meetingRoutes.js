@@ -1,11 +1,9 @@
 const { Router } = require('express');
 const meetingController = require('../controllers/meetingController');
-const paginatedResults = require('../middlewares/paginatedResults');
-const Meeting = require('../models/meeting');
 
 const router = Router();
 
-router.get('/list-meetings', paginatedResults(Meeting), meetingController.listMeetings_get);
+router.get('/list-meetings', meetingController.listMeetings_get);
 
 router.post('/add-meeting', meetingController.addMeeting_post);
 

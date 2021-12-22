@@ -20,7 +20,22 @@ const listMeetings_get = async (req, res) => {
     //     }
     //     res.status(200).json(data);
     // }).limit(limit).skip(limit * skip);
-    res.json(res.paginatedResults);
+
+    try {
+        Meeting.find({}, (err, data) => {
+        if(err) {
+            throw error;
+        }
+        data = {
+            meetings: data
+        }
+        res.status(200).json(data);
+        });
+    } catch(err) {
+        res.status(400).json({
+            error: err
+        });
+    }
 }
 
 const addMeeting_post = async (req, res) => {
@@ -43,9 +58,67 @@ const addMeeting_post = async (req, res) => {
     }
 }
 
-const updateMeeting_put = (req, res) => {}
+const updateMeeting_put = async (req, res) => {
+    const { id, subject, date, start_time, end_time, participants } = req.body;
 
-const deleteMeeting_delete = (req, res) => {}
+    var meeting = await Meeting.findById(id);
+
+    if(subject) {
+        meeting.subject = subject;
+    }
+    
+    if(date) {
+        meeting.date = date;
+    }
+
+    if(start_time) {
+        meeting.start_time = start_time;
+    }
+
+    if(end_time) {
+        meeting.end_time = end_time;
+    }
+
+    if(participants) {
+        meeting.participants = participants;
+    }
+
+    try {
+        await meeting.save();
+        res.status(200).json({
+            info: "Meeting is editted"
+        });
+    } catch(err) {
+        res.status(400).json({
+            error: err
+        });
+    }
+}
+
+const deleteMeeting_delete = (req, res) => {
+    const id = req.body.id;
+
+    try {
+        Meeting.findByIdAndRemove({
+            _id: id
+        })
+        .then(meeting => {
+            if(meeting) {
+                res.status(200).json({
+                    info: "Meeting is deleted"
+                });
+            } else {
+                res.status(400).json({
+                    info: "id is not valid"
+                });
+            }
+        });
+    } catch(err) {
+        res.status(400).json({
+            error: err
+        });
+    }
+}
 
 module.exports = {
     listMeetings_get,
