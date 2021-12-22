@@ -1,40 +1,27 @@
 const Meeting = require('../models/meeting');
 
 const listMeetings_get = async (req, res) => {
-    // let limit = 2;
-    // let skip = 0;
-
-    // if(req.body.limit && req.body.limit > 0) {
-    //     limit = req.body.limit
-    // }
-    // if(req.body.page && req.body.page > 0) {
-    //     skip = req.body.page - 1;
-    // }
-
-    // Meeting.find({}, (err, data) => {
-    //     if(err) {
-    //         throw error;
-    //     }
-    //     data = {
-    //         meetings: data
-    //     }
-    //     res.status(200).json(data);
-    // }).limit(limit).skip(limit * skip);
+    // destructure page and limit and set default values
+    const { page = 1, limit = 10 } = req.body;
 
     try {
-        Meeting.find({}, (err, data) => {
-        if(err) {
-            throw error;
-        }
-        data = {
-            meetings: data
-        }
-        res.status(200).json(data);
+        // execute query with page and limit values
+        const meetings = await Meeting.find()
+        .limit(limit * 1)
+        .skip((page - 1) * limit)
+        .exec();
+
+        // get total documents in the Posts collection 
+        const count = await Meeting.countDocuments();
+
+        // return response with meetings, total pages, and current page
+        res.json({
+        meetings,
+        totalPages: Math.ceil(count / limit),
+        currentPage: page
         });
-    } catch(err) {
-        res.status(400).json({
-            error: err
-        });
+    } catch (err) {
+        console.error(err.message);
     }
 }
 
