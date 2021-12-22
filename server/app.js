@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const meetingRoutes = require('./routes/meetingRoutes');
 
 const app = express();
 
@@ -17,3 +18,5 @@ mongoose.connect(MONGODBURI, { useNewUrlParser: true, useUnifiedTopology: true }
 app.get('/', (req, res) => {
     res.send('MEETING ORGANIZER');
 });
+
+app.use(meetingRoutes);

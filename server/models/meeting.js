@@ -10,7 +10,7 @@ const meetingSchema = mongoose.Schema({
         type: String,
         required: [true, 'Enter meeting subject']
     },
-    data: {
+    date: {
         type: Date,
         required: [true, 'Enter meeting date']
     },
