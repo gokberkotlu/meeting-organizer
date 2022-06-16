@@ -9,7 +9,7 @@ app.use(express.json());
 app.use(cors());
 
 const PORT = process.env.PORT || 4000;
-const MONGODBURI = 'mongodb+srv://meeting_admin:test1234@nodejs.htzvf.mongodb.net/meeting-organizer?retryWrites=true&w=majority';
+const MONGODBURI = process.env.MONGODBURI;
 
 mongoose.connect(MONGODBURI, { useNewUrlParser: true, useUnifiedTopology: true })
 .then((result) => app.listen(PORT))
